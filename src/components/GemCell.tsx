@@ -19,10 +19,11 @@ interface GemCellProps {
   cell: CellType;
   position: Position;
   selected: boolean;
+  highlighted: boolean;
   onClick: (pos: Position) => void;
 }
 
-export default function GemCell({ cell, position, selected, onClick }: GemCellProps) {
+export default function GemCell({ cell, position, selected, highlighted, onClick }: GemCellProps) {
   return (
     <button
       onClick={() => onClick(position)}
@@ -30,6 +31,7 @@ export default function GemCell({ cell, position, selected, onClick }: GemCellPr
         'w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center',
         cell ? colorMap[cell] : 'bg-transparent',
         selected && 'ring-4 ring-white scale-110 z-10',
+        highlighted && 'ring-4 ring-match-cyan animate-pulse scale-110 z-10',
         cell === 'stone' && 'cursor-default'
       )}
       disabled={cell === 'stone'}

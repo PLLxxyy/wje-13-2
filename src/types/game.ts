@@ -25,4 +25,6 @@ export interface GameState {
   isAnimating: boolean;
   gameStatus: 'playing' | 'won' | 'lost';
   combo: number;
+  hintsLeft: number;
+  hintCells: Position[];
 }

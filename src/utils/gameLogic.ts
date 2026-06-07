@@ -226,3 +226,29 @@ export function hasPossibleMoves(board: CellType[][]): boolean {
   }
   return false;
 }
+
+export function findPossibleMove(board: CellType[][]): Position[] | null {
+  const size = board.length;
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (board[r][c] === 'stone') continue;
+      const neighbors = [
+        { row: r + 1, col: c },
+        { row: r, col: c + 1 },
+      ];
+      for (const n of neighbors) {
+        if (n.row >= size || n.col >= size) continue;
+        if (board[n.row][n.col] === 'stone') continue;
+        const swapped = swapCells(board, { row: r, col: c }, n);
+        const matches = findMatches(swapped);
+        if (matches.length > 0) {
+          return [
+            { row: r, col: c },
+            { row: n.row, col: n.col },
+          ];
+        }
+      }
+    }
+  }
+  return null;
+}

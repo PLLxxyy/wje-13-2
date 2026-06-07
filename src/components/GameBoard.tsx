@@ -7,6 +7,7 @@ import type { Position } from '@/types/game';
 export default function GameBoard() {
   const board = useGameStore((s) => s.board);
   const selectedCell = useGameStore((s) => s.selectedCell);
+  const hintCells = useGameStore((s) => s.hintCells);
   const selectCell = useGameStore((s) => s.selectCell);
   const isAnimating = useGameStore((s) => s.isAnimating);
   const gameStatus = useGameStore((s) => s.gameStatus);
@@ -24,6 +25,10 @@ export default function GameBoard() {
     selectCell(pos);
   };
 
+  const isHighlighted = (r: number, c: number) => {
+    return hintCells.some((h) => h.row === r && h.col === c);
+  };
+
   if (board.length === 0) return null;
 
   return (
@@ -33,12 +38,14 @@ export default function GameBoard() {
           const pos = { row: r, col: c };
           const isSelected =
             selectedCell?.row === r && selectedCell?.col === c;
+          const highlighted = isHighlighted(r, c);
           return (
             <GemCell
               key={`${r}-${c}`}
               cell={cell}
               position={pos}
               selected={isSelected}
+              highlighted={highlighted}
               onClick={handleClick}
             />
           );

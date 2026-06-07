@@ -6,6 +6,7 @@ import {
   createBoard,
   dropGems,
   findMatches,
+  findPossibleMove,
   hasPossibleMoves,
   swapCells,
 } from '@/utils/gameLogic';
@@ -21,6 +22,9 @@ interface GameActions {
   setCombo: (val: number) => void;
   setGameStatus: (status: 'playing' | 'won' | 'lost') => void;
   resetGame: () => void;
+  useHint: () => void;
+  clearHint: () => void;
+  reshuffleBoard: () => void;
 }
 
 const INITIAL_MOVES = 20;
@@ -36,6 +40,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   isAnimating: false,
   gameStatus: 'playing',
   combo: 0,
+  hintsLeft: 3,
+  hintCells: [],
 
   initGame: () => {
     const board = createBoard(8, 0);
@@ -49,6 +55,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       isAnimating: false,
       gameStatus: 'playing',
       combo: 0,
+      hintsLeft: 3,
+      hintCells: [],
     });
   },
 
@@ -66,6 +74,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       isAnimating: false,
       gameStatus: 'playing',
       combo: 0,
+      hintsLeft: 3,
+      hintCells: [],
     });
   },
 
@@ -73,6 +83,10 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const state = get();
     if (state.isAnimating || state.gameStatus !== 'playing') return;
     if (state.board[pos.row][pos.col] === 'stone') return;
+
+    if (state.hintCells.length > 0) {
+      set({ hintCells: [] });
+    }
 
     if (!state.selectedCell) {
       set({ selectedCell: pos });
@@ -136,5 +150,26 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
 
   resetGame: () => {
     get().initGame();
+  },
+
+  useHint: () => {
+    const state = get();
+    if (state.hintsLeft <= 0 || state.isAnimating || state.gameStatus !== 'playing') return;
+    const move = findPossibleMove(state.board);
+    if (move) {
+      set({ hintsLeft: state.hintsLeft - 1, hintCells: move });
+    }
+  },
+
+  clearHint: () => {
+    set({ hintCells: [] });
+  },
+
+  reshuffleBoard: () => {
+    const state = get();
+    if (state.board.length === 0) return;
+    const stoneCount = Math.min(state.level * 2, 12);
+    const newBoard = createBoard(8, stoneCount);
+    set({ board: newBoard, hintCells: [] });
   },
 }));

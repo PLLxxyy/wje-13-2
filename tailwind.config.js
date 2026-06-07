@@ -22,6 +22,7 @@ export default {
           yellow: '#eab308',
           purple: '#a855f7',
           stone: '#78716c',
+          cyan: '#06b6d4',
         },
       },
       animation: {
